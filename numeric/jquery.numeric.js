@@ -139,8 +139,19 @@ $.fn.numeric.keypress = function(e)
 
 $.fn.numeric.keyup = function(e)
 {
+	// Determine if it is a paste action (CTRL+V or SHIFT+INS)
+	var paste = false;
+	// get the key that was pressed
+	var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
+	// allow or deny Ctrl+V (paste), Shift+Ins
+	if((e.ctrlKey && key == 118 /* firefox */) || (e.ctrlKey && key == 86) /* opera */
+	|| (e.shiftKey && key == 45)) {
+		paste = true;
+	}
+	
 	var val = $(this).val();
-	if(val && val.length > 0)
+	// Only process pate on key up event. Then CTRL+A, Y, Z ... actions will be process normally.
+	if(val && val.length > 0 && paste)
 	{
 		// get carat (cursor) position
 		var carat = $.fn.getSelectionStart(this);
